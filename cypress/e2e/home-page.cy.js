@@ -25,6 +25,9 @@ describe('Positive tests on the main page Python.org', () => {
         { name: 'Jobs', title: 'Python Job Board' }
     ];
     
+    const menuItems = [ 'About', 'Downloads', 'Documentation', 
+        'Community', 'Success Stories', 'News', 'Events' 
+    ];
     
     topMenuItems.forEach(({ name, urlPath }) => {
       it(`Tab ${name} opens the correct page`, () => {
@@ -44,9 +47,50 @@ describe('Positive tests on the main page Python.org', () => {
         cy.get('#top').contains('a', 'Community') 
             .should('not.have.attr', 'title'); });
 
-   //it('Main page opens and header is visible', () => {
-    // cy.title().should('eq', 'Welcome to Python.org');
-   //});
+    
 
+    it('Donate button is exist', () => {
+    cy.get('a.donate-button').should('exist');
+    });
+
+    it('Search field is exist', () => {
+    cy.get('#id-search-field').should('exist');
+    });
+
+    it('Go Button is exist', () => {
+    cy.get('#submit').should('exist');
+    });
+
+    menuItems.forEach(item => { it(`В меню есть пункт "${item}"`, () => {
+        cy.get('#mainnav').contains('a', item)
+            .should('exist'); 
+        });
+    });
+
+});
+
+describe('Search field positive test', () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
+
+    it('Searching for "Learn" returns results', () => { 
+        cy.get('#id-search-field').type('Learn'); 
+        cy.get('#submit').click(); 
+        cy.contains('Learn').should('exist'); 
+    });
+});
+
+describe('Search field negative test', () => {
+    beforeEach(() => {
+        cy.visit('/');
+    });
+
+    it('Searching for an empty value does not return a result.', () => { 
+        cy.get('#submit').click();
+        cy.url().should('include', 'search');
+        cy.get('#id-search-field').should('have.value', '');
+        cy.get('.list-recent-events').should('not.exist'); 
+    });
 });
 
